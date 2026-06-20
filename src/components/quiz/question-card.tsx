@@ -43,8 +43,11 @@ export function QuestionCard({ question, selected, onSelect }: QuestionCardProps
 
       <CardContent className="space-y-6">
         <RadioGroup
-          value={selected}
-          onValueChange={(value) => onSelect(value as Choice)}
+          key={question.id}
+          value={selected ?? ""}
+          onValueChange={(value) => {
+            if (value) onSelect(value as Choice);
+          }}
           disabled={isAnswered}
           className="gap-3"
         >
