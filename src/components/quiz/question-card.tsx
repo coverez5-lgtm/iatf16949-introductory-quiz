@@ -15,8 +15,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { cn } from "@/lib/utils";
 
 interface QuestionCardProps {
@@ -42,44 +40,47 @@ export function QuestionCard({ question, selected, onSelect }: QuestionCardProps
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <RadioGroup
-          key={question.id}
-          value={selected ?? ""}
-          onValueChange={(value) => {
-            if (value) onSelect(value as Choice);
-          }}
-          disabled={isAnswered}
-          className="gap-3"
+        <div
+          role="radiogroup"
+          aria-label={`Q${question.id} の選択肢`}
+          className="flex flex-col gap-3"
         >
           {choiceLabels.map((label) => {
             const isSelected = selected === label;
             const isCorrectChoice = label === question.correctAnswer;
 
             return (
-              <Label
+              <button
                 key={label}
-                htmlFor={`q${question.id}-${label}`}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
+                disabled={isAnswered}
+                onClick={() => onSelect(label)}
                 className={cn(
-                  "hover:bg-accent/50 flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors",
+                  "hover:bg-accent/50 flex w-full cursor-pointer items-start gap-3 rounded-lg border p-4 text-left transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-default",
                   isAnswered && isCorrectChoice && "border-green-300 bg-green-50 dark:bg-green-950/20",
                   isAnswered && isSelected && !isCorrectChoice && "border-red-300 bg-red-50 dark:bg-red-950/20",
                   !isAnswered && isSelected && "border-primary bg-primary/5",
-                  isAnswered && "cursor-default",
                 )}
               >
-                <RadioGroupItem
-                  value={label}
-                  id={`q${question.id}-${label}`}
-                  className="mt-0.5"
-                />
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border shadow-xs",
+                    isSelected ? "border-primary" : "border-input",
+                  )}
+                >
+                  {isSelected && <span className="bg-primary size-2 rounded-full" />}
+                </span>
                 <div className="space-y-1">
                   <span className="text-primary font-bold">{label}</span>
                   <p className="text-sm leading-relaxed font-normal">{question.choices[label]}</p>
                 </div>
-              </Label>
+              </button>
             );
           })}
-        </RadioGroup>
+        </div>
 
         {isAnswered && (
           <Collapsible defaultOpen>

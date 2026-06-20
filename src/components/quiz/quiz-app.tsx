@@ -97,6 +97,7 @@ export function QuizApp() {
             </div>
 
             <QuestionCard
+              key={currentQuestion.id}
               question={currentQuestion}
               selected={answers[currentQuestion.id]}
               onSelect={handleSelect}
